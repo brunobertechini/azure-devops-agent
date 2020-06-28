@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as base
 
 ENV DEBIAN_FRONTEND=noninteractive \
     METADATA_FILE=/image/metadata.txt \
@@ -8,9 +8,6 @@ RUN echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes && \
     mkdir /image && \ 
     mkdir agent && \
     touch /image/metadata.txt
-
-COPY scripts /scripts
-RUN chmod +x /scripts/base/* && chmod +x /scripts/helpers/* && chmod +x /scripts/installers/*
 
 RUN apt-get update && \
     apt-get install \
@@ -24,30 +21,39 @@ RUN apt-get update && \
     sqlite \
     sqlite3
 
+COPY scripts/base /scripts/base
+COPY scripts/helpers /scripts/helpers
+RUN chmod +x /scripts/base/* && chmod +x /scripts/base/installers/* && chmod +x /scripts/helpers/*
+
 # Commands from Base Image
-RUN /scripts/base/preparemetadata.sh && \
-    /scripts/installers/basic.sh && \
-    /scripts/base/repos.sh && \
-    /scripts/helpers/apt.sh && \
-    /scripts/installers/7-zip.sh && \
-    /scripts/installers/azcopy.sh && \
-    /scripts/installers/gcc.sh && \
-    /scripts/installers/clang.sh && \
-    /scripts/installers/cmake.sh && \
-    /scripts/installers/build-essential.sh && \
-    /scripts/installers/azure-cli.sh && \
-    /scripts/installers/azure-devops-cli.sh
+RUN /scripts/base/preparemetadata.sh
+RUN /scripts/base/basic.sh
+RUN /scripts/base/repos.sh
+RUN /scripts/helpers/apt.sh
+RUN /scripts/base/7-zip.sh
+RUN /scripts/base/azcopy.sh
+RUN /scripts/base/gcc.sh
+RUN /scripts/base/clang.sh
+RUN /scripts/base/cmake.sh
+RUN /scripts/base/build-essential.sh
+RUN /scripts/base/azure-cli.sh
+RUN /scripts/base/azure-devops-cli.sh
 
-# Commands from Docker Image
-RUN /scripts/installers/docker-moby.sh && \
-    /scripts/installers/docker-compose.sh && \
-    /scripts/installers/kubernetes-tools.sh
+FROM base as docker
+COPY scripts/docker /scripts/docker
+RUN chmod +x /scripts/docker/*
+RUN /scripts/docker/docker-moby.sh
+RUN /scripts/docker/docker-compose.sh
+RUN /scripts/docker/kubernetes-tools.sh
 
-# Commands from Dotnet
-RUN /scripts/installers/mspackages.sh && \
-    /scripts/installers/dotnetcore-sdk.sh && \
-    /scripts/installers/powershellcore.sh && \
-    /scripts/installers/azpowershell.sh
+FROM docker as dotnet
+COPY scripts/dotnet /scripts/dotnet
+RUN chmod +x /scripts/dotnet/*
+RUN /scripts/dotnet/dotnetcore-sdk.sh
+RUN /scripts/dotnet/powershellcore.sh
+RUN /scripts/dotnet/azpowershell.sh
+
+
 
 WORKDIR /azp
 

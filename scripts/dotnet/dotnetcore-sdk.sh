@@ -47,7 +47,7 @@ for sdk in $sdks; do
         # Install manually if not in package repo
         if [[ "$sdk" =~ ^1.*$ ]]; then
             # https://dotnet.microsoft.com/download/linux-package-manager/rhel/sdk-2.2.401
-            url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$sdk/dotnet-dev-ubuntu.16.04-x64.$sdk.tar.gz"
+            url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$sdk/dotnet-dev-ubuntu.18.04-x64.$sdk.tar.gz"
         else
             url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$sdk/dotnet-sdk-$sdk-linux-x64.tar.gz"
         fi
