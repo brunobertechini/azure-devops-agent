@@ -53,7 +53,17 @@ RUN /scripts/dotnet/dotnetcore-sdk.sh
 RUN /scripts/dotnet/powershellcore.sh
 RUN /scripts/dotnet/azpowershell.sh
 
+FROM dotnet as nodejs
+ENV AGENT_TOOLSDIRECTORY=/_work/_tool
+COPY scripts/nodejs /scripts/nodejs
+RUN chmod +x /scripts/nodejs/*
+RUN /scripts/nodejs/nodejs.sh
 
+FROM nodejs as extras
+COPY scripts/extras /scripts/extras
+RUN chmod +x /scripts/extras/*
+RUN /scripts/extras/google-chrome.sh
+RUN /scripts/extras/firefox.sh
 
 WORKDIR /azp
 
