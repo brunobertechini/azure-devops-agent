@@ -68,5 +68,5 @@ RUN /scripts/extras/firefox.sh
 WORKDIR /azp
 
 COPY ./start.sh .
-
+RUN chmod +x start.sh
 CMD ["./start.sh"]
