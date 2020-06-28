@@ -23,6 +23,9 @@ RUN apt-get update && \
     sqlite \
     sqlite3
 
+RUN chmod +x /scripts/base/* && chmod +x /scripts/helpers/* && chmod +x /scripts/installers/*
+
+# Commands from Base Image
 RUN /scripts/base/preparemetadata.sh && \
     /scripts/installers/basic.sh && \
     /scripts/base/repos.sh && \
