@@ -23,7 +23,7 @@ RUN apt-get update && \
 
 COPY scripts/base /scripts/base
 COPY scripts/helpers /scripts/helpers
-RUN chmod +x /scripts/base/* && chmod +x /scripts/base/installers/* && chmod +x /scripts/helpers/*
+RUN chmod +x /scripts/base/* && chmod +x /scripts/helpers/*
 
 # Commands from Base Image
 RUN /scripts/base/preparemetadata.sh
